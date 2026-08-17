@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mastering Irregular Verbs - MCQ Quiz</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            color: #f8fafc;
+        }
+
+        .glass-card {
+            background: #ffffff;
+            border-radius: 24px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 650px;
+            padding: 2.5rem;
+            color: #1e293b;
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 12px;
+            background-color: #f1f5f9;
+            border-radius: 50px;
+            overflow: hidden;
+            display: flex;
+        }
+
+        .progress-correct { background: #10b981; transition: width 0.4s ease; }
+        .progress-incorrect { background: #ef4444; transition: width 0.4s ease; }
+
+        .option-btn {
+            display: block;
+            width: 100%;
+            text-align: left;
+            padding: 14px 18px;
+            margin-bottom: 10px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-weight: 500;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            border-color: #6366f1;
+            background-color: #f8faff;
+        }
+
+        .option-btn.correct {
+            background-color: #d1fae5 !important;
+            border-color: #10b981 !important;
+            color: #065f46;
+        }
+
+        .option-btn.incorrect {
+            background-color: #fee2e2 !important;
+            border-color: #ef4444 !important;
+            color: #991b1b;
+        }
+
+        .fade-in { animation: fadeIn 0.3s ease-out; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Stats Panel -->
+    <div class="glass-card mb-6 py-4">
+        <div class="flex justify-between items-center mb-3 px-2">
+            <h1 class="text-lg font-bold">Quiz Performance</h1>
+            <span id="completion-text" class="text-xs font-bold text-indigo-600 uppercase tracking-widest">In Progress</span>
+        </div>
+        <div class="progress-bar-container mb-4">
+            <div id="bar-correct" class="progress-correct" style="width: 0%"></div>
+            <div id="bar-incorrect" class="progress-incorrect" style="width: 0%"></div>
+        </div>
+        <div class="grid grid-cols-3 gap-2">
+            <div class="text-center bg-slate-50 p-2 rounded-lg">
+                <div class="text-[10px] text-slate-500 font-bold uppercase">Correct</div>
+                <div id="stat-correct" class="text-lg font-bold text-emerald-600">0</div>
+            </div>
+            <div class="text-center bg-slate-50 p-2 rounded-lg">
+                <div class="text-[10px] text-slate-500 font-bold uppercase">Wrong</div>
+                <div id="stat-incorrect" class="text-lg font-bold text-rose-600">0</div>
+            </div>
+            <div class="text-center bg-slate-50 p-2 rounded-lg">
+                <div class="text-[10px] text-slate-500 font-bold uppercase">Left</div>
+                <div id="stat-pending" class="text-lg font-bold text-slate-600">50</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quiz Panel -->
+    <div class="glass-card fade-in" id="quiz-ui">
+        <div class="flex justify-between items-start mb-6">
+            <div>
+                <p id="section-label" class="text-indigo-600 text-xs font-bold uppercase tracking-tighter">Section 1/10</p>
+                <h3 id="q-count" class="text-slate-400 text-[11px] font-semibold">Question 1 of 50</h3>
+            </div>
+            <div id="q-feedback"></div>
+        </div>
+
+        <h2 id="question-text" class="text-xl font-bold text-slate-800 mb-6">Loading Question...</h2>
+
+        <div id="options-box"></div>
+
+        <div class="mt-8 pt-6 border-t border-slate-100 flex justify-between items-center">
+            <button id="btn-reset" onclick="hardReset()" class="bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white px-4 py-2 rounded-lg font-bold text-xs transition-colors border border-rose-200">
+                RESET ALL
+            </button>
+
+            <div class="flex space-x-2">
+                <button id="btn-prev" onclick="move(-1)" class="px-4 py-2 text-slate-500 font-bold text-sm hover:text-indigo-600 disabled:opacity-30">Back</button>
+                <button id="btn-next" onclick="move(1)" class="bg-indigo-600 text-white px-6 py-2 rounded-xl font-bold text-sm shadow-lg hover:bg-indigo-700 transition-all">Next</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            { q: "I ______ to the gym every morning, but yesterday I was too tired.", a: ["go", "went", "didn't go", "goes"], c: 0 },
+            { q: "She usually ______ an apple, but this morning she ______ a banana instead.", a: ["eats / ate", "eat / eaten", "ate / eats", "eating / ate"], c: 0 },
+            { q: "Last Friday, we ______ fresh bread, but we ______ any today.", a: ["buy / didn't buy", "bought / haven't buy", "bought / didn't buy", "buys / bought"], c: 2 },
+            { q: "They ______ a movie once a week. They ______ a great one last night.", a: ["saw / see", "see / saw", "sees / seen", "seeing / saw"], c: 1 },
+            { q: "He ______ tea every afternoon, but he ______ any an hour ago.", a: ["drink / drank", "drinks / didn't drink", "drank / drinks", "drinks / drunk"], c: 1 },
+            { q: "I ______ in my journal nightly. I ______ a very long entry yesterday.", a: ["write / wrote", "wrote / write", "writes / writing", "write / written"], c: 0 },
+            { q: "You ______ very clearly today, but you ______ much at the meeting yesterday.", a: ["spoke / speak", "speak / didn't speak", "speaks / spoke", "speaking / spoke"], c: 1 },
+            { q: "The sun ______ at 6:00 AM every day. It ______ at exactly that time today.", a: ["rises / rose", "rose / rises", "rising / rise", "rise / risen"], c: 0 },
+            { q: "We usually ______ our friends on Sundays. We ______ them last Sunday.", a: ["meet / met", "met / meet", "meets / meeting", "meet / meeted"], c: 0 },
+            { q: "I ______ the answer now, but I ______ it when you asked me earlier.", a: ["knew / know", "know / didn't know", "knows / knew", "knowing / knew"], c: 1 },
+            { q: "She ______ me a gift every year. She ______ me a watch yesterday.", a: ["gives / gave", "gave / gives", "give / giving", "gives / give"], c: 0 },
+            { q: "He always ______ the bus, but this morning he ______ a taxi.", a: ["takes / took", "took / takes", "take / taking", "takes / taken"], c: 0 },
+            { q: "They ______ in the choir every Tuesday. They ______ beautifully last week.", a: ["sing / sang", "sang / sing", "sings / singing", "sing / sung"], c: 0 },
+            { q: "Birds ______ south every winter. A large flock ______ over the house today.", a: ["fly / flew", "flew / fly", "flies / flown", "fly / flies"], c: 0 },
+            { q: "I often ______ my keys. I ______ them again this morning.", a: ["forget / forgot", "forgot / forget", "forgets / forgetting", "forget / forgotten"], c: 0 },
+            { q: "The wind ______ hard today. It ______ even harder last night.", a: ["blows / blew", "blew / blows", "blow / blown", "blowing / blew"], c: 0 },
+            { q: "We ______ sandcastles every summer. We ______ a huge one yesterday.", a: ["build / built", "built / build", "builds / building", "build / builded"], c: 0 },
+            { q: "She ______ jewelry online. She ______ a diamond necklace today.", a: ["sells / sold", "sold / sells", "sell / selling", "sells / sell"], c: 0 },
+            { q: "He ______ coffee every morning, but he ______ any to the office yesterday.", a: ["brings / didn't bring", "brought / brings", "bring / bringing", "brings / brought"], c: 0 },
+            { q: "They often ______ in the lake. They ______ for two hours in July.", a: ["swim / swam", "swam / swim", "swims / swimming", "swim / swum"], c: 0 },
+            { q: "I ______ happy when it rains, and I ______ very happy yesterday.", a: ["feel / felt", "felt / feel", "feels / feeling", "feel / feeled"], c: 0 },
+            { q: "You usually ______ a red car, but you ______ a blue one last year.", a: ["drive / drove", "drove / drive", "drives / driving", "drive / driven"], c: 0 },
+            { q: "The cat usually ______ on the sofa. It ______ there all day yesterday.", a: ["sleeps / slept", "slept / sleeps", "sleep / sleeping", "sleeps / sleeped"], c: 0 },
+            { q: "We ______ five miles every Saturday. We ______ that distance last Saturday too.", a: ["run / ran", "ran / run", "runs / running", "run / runned"], c: 0 },
+            { q: "She ______ a book every week. She ______ a historical novel last night.", a: ["reads / read", "read / reads", "reading / read", "reads / reading"], c: 0 },
+            { q: "He always ______ funny stories. He ______ a great one at dinner.", a: ["tells / told", "told / tells", "tell / telling", "tells / tell"], c: 0 },
+            { q: "I ______ music from the street now, but I ______ anything last night.", a: ["hear / didn't hear", "heard / hear", "hears / hearing", "hear / heard"], c: 0 },
+            { q: "They ______ their keys frequently. They ______ them twice yesterday.", a: ["lose / lost", "lost / lose", "loses / losing", "lose / losed"], c: 0 },
+            { q: "We ______ dinner at 7:00 PM every night. We ______ a special meal yesterday.", a: ["make / made", "made / make", "makes / making", "make / maked"], c: 0 },
+            { q: "You ______ the lesson today, but you ______ it earlier.", a: ["understand / didn't understand", "understood / understand", "understands / understood", "understanding / understood"], c: 0 },
+            { q: "I ______ home at 8:00 AM every day. I ______ exactly on time today.", a: ["leave / left", "left / leave", "leaves / leaving", "leave / leaved"], c: 0 },
+            { q: "She ______ a lot of money. She ______ all of it on shoes last week.", a: ["spends / spent", "spent / spends", "spend / spending", "spends / spended"], c: 0 },
+            { q: "He usually ______ in the front row. He ______ there again today.", a: ["sits / sat", "sat / sits", "sit / sitting", "sits / sitted"], c: 0 },
+            { q: "They usually ______ their games. They ______ the championship yesterday.", a: ["win / won", "won / win", "wins / winning", "win / winned"], c: 0 },
+            { q: "We always ______ the best fruit. We ______ some fresh apples today.", a: ["choose / chose", "chose / choose", "chooses / choosing", "choose / choosed"], c: 0 },
+            { q: "I sometimes ______ my habits. I ______ a glass by accident today.", a: ["break / broke", "broke / break", "breaks / breaking", "break / broken"], c: 0 },
+            { q: "You always ______ the bills on time. You ______ them yesterday morning.", a: ["pay / paid", "paid / pay", "pays / paying", "pay / payed"], c: 0 },
+            { q: "The baby often ______ while learning to walk. He ______ down a minute ago.", a: ["falls / fell", "fell / falls", "fall / falling", "falls / fallen"], c: 0 },
+            { q: "She ______ English at school. She ______ for ten years before retiring.", a: ["teaches / taught", "taught / teaches", "teach / teaching", "teaches / teach"], c: 0 },
+            { q: "He often ______ coins. He ______ a silver dollar today.", a: ["finds / found", "found / finds", "find / finding", "finds / find"], c: 0 },
+            { q: "I always ______ my room clean. I ______ it clean all last week.", a: ["keep / kept", "kept / keep", "keeps / keeping", "keep / keeped"], c: 0 },
+            { q: "We often ______ about the future. We ______ about it all night.", a: ["think / thought", "thought / think", "thinks / thinking", "think / thinked"], c: 0 },
+            { q: "They ______ beautiful pictures. They ______ a masterpiece in class today.", a: ["draw / drew", "drew / draw", "draws / drawing", "draw / drawn"], c: 0 },
+            { q: "The bell ______ at noon every day. It ______ five minutes ago.", a: ["rings / rang", "rang / rings", "ring / rung", "ringing / rang"], c: 0 },
+            { q: "You ______ emails every morning. You ______ one to me an hour ago.", a: ["send / sent", "sent / send", "sends / sending", "send / sended"], c: 0 },
+            { q: "I ______ tired in the evening. I ______ very tired after my walk today.", a: ["become / became", "became / become", "becomes / becoming", "become / becomed"], c: 0 },
+            { q: "She ______ the ball easily. She ______ every ball thrown to her yesterday.", a: ["catches / caught", "caught / catches", "catch / catching", "catches / catched"], c: 0 },
+            { q: "He usually ______ a suit, but he ______ a casual shirt on Monday.", a: ["wears / wore", "wore / wears", "wear / wearing", "wears / wear"], c: 0 },
+            { q: "We ______ in line for lunch every day. We ______ for an hour today.", a: ["stand / stood", "stood / stand", "stands / standing", "stand / standed"], c: 0 },
+            { q: "They ______ the ball to the dog. They ______ it so far that he couldn't find it.", a: ["throw / threw", "threw / throw", "throws / throwing", "throw / thrown"], c: 0 }
+        ];
+
+        let cursor = 0;
+        let logs = new Array(questions.length).fill(null);
+
+        function updateStats() {
+            let done = 0, ok = 0, err = 0;
+            logs.forEach((val, i) => {
+                if (val !== null) {
+                    done++;
+                    if (val === questions[i].c) ok++; else err++;
+                }
+            });
+
+            const total = questions.length;
+            document.getElementById('bar-correct').style.width = (ok / total * 100) + '%';
+            document.getElementById('bar-incorrect').style.width = (err / total * 100) + '%';
+            
+            document.getElementById('stat-correct').innerText = ok;
+            document.getElementById('stat-incorrect').innerText = err;
+            document.getElementById('stat-pending').innerText = total - done;
+
+            if (done === total) {
+                document.getElementById('completion-text').innerText = "Finished!";
+                document.getElementById('completion-text').className = "text-xs font-bold text-emerald-600 uppercase tracking-widest";
+            } else {
+                document.getElementById('completion-text').innerText = "In Progress";
+                document.getElementById('completion-text').className = "text-xs font-bold text-indigo-600 uppercase tracking-widest";
+            }
+        }
+
+        function render() {
+            const data = questions[cursor];
+            const sec = Math.floor(cursor / 5) + 1;
+            
+            document.getElementById('section-label').innerText = `Section ${sec}/10`;
+            document.getElementById('q-count').innerText = `Question ${cursor + 1} of ${questions.length}`;
+            document.getElementById('question-text').innerText = data.q;
+            
+            const box = document.getElementById('options-box');
+            box.innerHTML = '';
+            
+            const feed = document.getElementById('q-feedback');
+            feed.innerHTML = '';
+
+            data.a.forEach((txt, i) => {
+                const b = document.createElement('button');
+                b.className = 'option-btn';
+                b.innerText = txt;
+                
+                if (logs[cursor] !== null) {
+                    b.disabled = true;
+                    if (i === data.c) b.classList.add('correct');
+                    if (i === logs[cursor] && i !== data.c) b.classList.add('incorrect');
+                } else {
+                    b.onclick = () => pick(i);
+                }
+                box.appendChild(b);
+            });
+
+            if (logs[cursor] !== null) {
+                const correct = logs[cursor] === data.c;
+                feed.innerHTML = correct ? 
+                    `<span class="bg-emerald-100 text-emerald-700 px-2 py-1 rounded text-[10px] font-bold">CORRECT</span>` : 
+                    `<span class="bg-rose-100 text-rose-700 px-2 py-1 rounded text-[10px] font-bold">INCORRECT</span>`;
+            }
+
+            document.getElementById('btn-prev').disabled = cursor === 0;
+            document.getElementById('btn-next').innerText = cursor === questions.length - 1 ? 'Finish' : 'Next';
+        }
+
+        function pick(idx) {
+            logs[cursor] = idx;
+            updateStats();
+            render();
+            // Auto-advance if correct
+            if (idx === questions[cursor].c && cursor < questions.length - 1) {
+                setTimeout(() => move(1), 500);
+            }
+        }
+
+        function move(step) {
+            const target = cursor + step;
+            if (target >= 0 && target < questions.length) {
+                cursor = target;
+                render();
+            } else if (target === questions.length) {
+                const score = logs.filter((v, i) => v === questions[i].c).length;
+                alert(`Final Score: ${score} / ${questions.length}`);
+            }
+        }
+
+        function hardReset() {
+            // Confirm with user
+            const confirmReset = confirm("Reset all progress and start over?");
+            if (confirmReset) {
+                // Wipe data
+                logs = new Array(questions.length).fill(null);
+                cursor = 0;
+                // Refresh UI
+                updateStats();
+                render();
+            }
+        }
+
+        // Init
+        updateStats();
+        render();
+    </script>
+</body>
+</html>

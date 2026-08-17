@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Irregular Verbs Master Quiz</title>
+    <style>
+        :root {
+            --primary: #4a90e2;
+            --secondary: #67b26f;
+            --danger: #e74c3c;
+            --dark: #2c3e50;
+            --light: #f4f7f6;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ece9e6, #ffffff);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            color: var(--dark);
+        }
+
+        #quiz-container {
+            background: white;
+            width: 90%;
+            max-width: 600px;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            text-align: center;
+            position: relative;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        #timer {
+            font-size: 1.2rem;
+            color: var(--danger);
+            padding: 5px 15px;
+            border: 2px solid var(--danger);
+            border-radius: 50px;
+        }
+
+        #score-display {
+            font-size: 1.2rem;
+            color: var(--primary);
+        }
+
+        .group-indicator {
+            background: var(--light);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+            display: inline-block;
+        }
+
+        #question-text {
+            font-size: 1.4rem;
+            margin: 20px 0;
+            min-height: 60px;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+
+        .option-btn {
+            background: var(--light);
+            border: 2px solid #ddd;
+            padding: 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: all 0.2s;
+            outline: none;
+        }
+
+        .option-btn:hover {
+            background: #eef2f3;
+            border-color: var(--primary);
+        }
+
+        .correct {
+            background: #d4edda !important;
+            border-color: #28a745 !important;
+            color: #155724;
+        }
+
+        .wrong {
+            background: #f8d7da !important;
+            border-color: #dc3545 !important;
+            color: #721c24;
+        }
+
+        #feedback {
+            margin-top: 20px;
+            font-weight: bold;
+            height: 24px;
+        }
+
+        #next-btn {
+            margin-top: 20px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 10px;
+            font-size: 1rem;
+            cursor: pointer;
+            display: none;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #eee;
+            border-radius: 10px;
+            margin-top: 25px;
+            overflow: hidden;
+        }
+
+        #progress-fill {
+            height: 100%;
+            background: var(--secondary);
+            width: 0%;
+            transition: width 0.3s;
+        }
+    </style>
+</head>
+<body>
+
+<div id="quiz-container">
+    <div class="header">
+        <div id="score-display">Score: 0</div>
+        <div id="timer">15s</div>
+    </div>
+    
+    <div id="group-title" class="group-indicator">Group 1: Past Simple</div>
+    <div id="question-text">Loading question...</div>
+    
+    <div class="options-grid" id="options-container">
+        </div>
+
+    <div id="feedback"></div>
+    <button id="next-btn" onclick="loadNextQuestion()">Next Question</button>
+
+    <div class="progress-bar">
+        <div id="progress-fill"></div>
+    </div>
+</div>
+
+<script>
+    const questions = [
+        // GROUP 1: Past Simple (1-10)
+        { q: "I ____ to the store yesterday morning.", options: ["go", "went", "gone"], a: 1, group: "Group 1: Past Simple" },
+        { q: "She ____ a beautiful dress for the party.", options: ["buyed", "bought", "buys"], a: 1, group: "Group 1: Past Simple" },
+        { q: "They ____ dinner at a fancy restaurant.", options: ["ate", "eaten", "eat"], a: 0, group: "Group 1: Past Simple" },
+        { q: "He ____ a cold glass of water.", options: ["drink", "drunk", "drank"], a: 2, group: "Group 1: Past Simple" },
+        { q: "We ____ a group of dolphins.", options: ["saw", "seen", "see"], a: 0, group: "Group 1: Past Simple" },
+        { q: "The teacher ____ us a lot of homework.", options: ["give", "given", "gave"], a: 2, group: "Group 1: Past Simple" },
+        { q: "I ____ a ten-dollar bill on the sidewalk.", options: ["finded", "found", "find"], a: 1, group: "Group 1: Past Simple" },
+        { q: "You ____ the answer to the question.", options: ["knew", "knowed", "known"], a: 0, group: "Group 1: Past Simple" },
+        { q: "He ____ a heartfelt letter.", options: ["written", "wrote", "write"], a: 1, group: "Group 1: Past Simple" },
+        { q: "She ____ her favorite song on stage.", options: ["sung", "singed", "sang"], a: 2, group: "Group 1: Past Simple" },
+
+        // GROUP 2: Past Simple (11-20)
+        { q: "The birds ____ south for the winter.", options: ["flyed", "flew", "flown"], a: 1, group: "Group 2: Past Simple" },
+        { q: "We ____ the bus this morning.", options: ["took", "taked", "taken"], a: 0, group: "Group 2: Past Simple" },
+        { q: "I ____ much better after a nap.", options: ["feeled", "felt", "feel"], a: 1, group: "Group 2: Past Simple" },
+        { q: "They ____ to the manager.", options: ["spoken", "speak", "spoke"], a: 2, group: "Group 2: Past Simple" },
+        { q: "He ____ his keys on the table.", options: ["left", "leaved", "lefted"], a: 0, group: "Group 2: Past Simple" },
+        { q: "The cat ____ on the sofa.", options: ["sleeped", "slept", "sleep"], a: 1, group: "Group 2: Past Simple" },
+        { q: "I ____ the entire book yesterday.", options: ["read (red)", "readed", "reads"], a: 0, group: "Group 2: Past Simple" },
+        { q: "She ____ a delicious chocolate cake.", options: ["make", "maked", "made"], a: 2, group: "Group 2: Past Simple" },
+        { q: "We ____ in the lake during summer.", options: ["swum", "swam", "swimmed"], a: 1, group: "Group 2: Past Simple" },
+        { q: "The glass ____ when it hit the floor.", options: ["broke", "breaked", "broken"], a: 0, group: "Group 2: Past Simple" },
+
+        // GROUP 3: Auxiliary Verbs (21-30)
+        { q: "I have ____ that movie three times.", options: ["saw", "see", "seen"], a: 2, group: "Group 3: Auxiliary Verbs" },
+        { q: "She has ____ to the bank.", options: ["went", "gone", "go"], a: 1, group: "Group 3: Auxiliary Verbs" },
+        { q: "They had ____ lunch before we arrived.", options: ["eat", "ate", "eaten"], a: 2, group: "Group 3: Auxiliary Verbs" },
+        { q: "Did you ____ to your brother?", options: ["speak", "spoke", "spoken"], a: 0, group: "Group 3: Auxiliary Verbs" },
+        { q: "He has ____ five novels.", options: ["wrote", "written", "write"], a: 1, group: "Group 3: Auxiliary Verbs" },
+        { q: "We have ____ all your old drawings.", options: ["keep", "kept", "keeped"], a: 1, group: "Group 3: Auxiliary Verbs" },
+        { q: "I did not ____ that you were coming.", options: ["knew", "know", "known"], a: 1, group: "Group 3: Auxiliary Verbs" },
+        { q: "Has she ____ her vitamins yet?", options: ["took", "taken", "take"], a: 1, group: "Group 3: Auxiliary Verbs" },
+        { q: "They had ____ the record early.", options: ["broke", "broken", "break"], a: 1, group: "Group 3: Auxiliary Verbs" },
+        { q: "I have ____ very tired lately.", options: ["felt", "feel", "feeled"], a: 0, group: "Group 3: Auxiliary Verbs" },
+
+        // GROUP 4: Present Simple (31-40)
+        { q: "I ____ an apple every single day.", options: ["eat", "ate", "eaten"], a: 0, group: "Group 4: Present Simple" },
+        { q: "She ____ to the gym on Mondays.", options: ["go", "gone", "goes"], a: 2, group: "Group 4: Present Simple" },
+        { q: "They ____ English and Spanish fluently.", options: ["speak", "speaks", "spoke"], a: 0, group: "Group 4: Present Simple" },
+        { q: "He ____ the train to work every morning.", options: ["takes", "take", "took"], a: 0, group: "Group 4: Present Simple" },
+        { q: "We ____ the rules of the game.", options: ["knows", "know", "knew"], a: 1, group: "Group 4: Present Simple" },
+        { q: "The sun ____ in the east.", options: ["rise", "rises", "rose"], a: 1, group: "Group 4: Present Simple" },
+        { q: "You ____ beautiful poetry.", options: ["write", "writes", "wrote"], a: 0, group: "Group 4: Present Simple" },
+        { q: "I ____ what you are saying.", options: ["understands", "understood", "understand"], a: 2, group: "Group 4: Present Simple" },
+        { q: "Cats ____ for many hours a day.", options: ["sleeps", "sleep", "slept"], a: 1, group: "Group 4: Present Simple" },
+        { q: "He ____ a portion of his salary to charity.", options: ["give", "gives", "gave"], a: 1, group: "Group 4: Present Simple" }
+    ];
+
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let timerValue = 15;
+    let timerInterval;
+
+    const questionText = document.getElementById('question-text');
+    const optionsContainer = document.getElementById('options-container');
+    const timerDisplay = document.getElementById('timer');
+    const scoreDisplay = document.getElementById('score-display');
+    const feedback = document.getElementById('feedback');
+    const nextBtn = document.getElementById('next-btn');
+    const progressFill = document.getElementById('progress-fill');
+    const groupTitle = document.getElementById('group-title');
+
+    function startTimer() {
+        timerValue = 15;
+        timerDisplay.textContent = timerValue + 's';
+        timerInterval = setInterval(() => {
+            timerValue--;
+            timerDisplay.textContent = timerValue + 's';
+            if (timerValue <= 0) {
+                clearInterval(timerInterval);
+                handleAnswer(-1); // Time out
+            }
+        }, 1000);
+    }
+
+    function loadQuestion() {
+        clearInterval(timerInterval);
+        const q = questions[currentQuestionIndex];
+        questionText.textContent = q.q;
+        groupTitle.textContent = q.group;
+        optionsContainer.innerHTML = '';
+        feedback.textContent = '';
+        nextBtn.style.display = 'none';
+
+        q.options.forEach((opt, index) => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.textContent = opt;
+            btn.onclick = () => handleAnswer(index);
+            optionsContainer.appendChild(btn);
+        });
+
+        startTimer();
+    }
+
+    function handleAnswer(selectedIndex) {
+        clearInterval(timerInterval);
+        const q = questions[currentQuestionIndex];
+        const buttons = optionsContainer.getElementsByClassName('option-btn');
+        
+        // Disable all buttons
+        for (let btn of buttons) { btn.disabled = true; }
+
+        if (selectedIndex === q.a) {
+            score++;
+            scoreDisplay.textContent = `Score: ${score}`;
+            buttons[selectedIndex].classList.add('correct');
+            feedback.textContent = "Correct! Well done.";
+            feedback.style.color = "green";
+        } else {
+            if (selectedIndex !== -1) {
+                buttons[selectedIndex].classList.add('wrong');
+            }
+            buttons[q.a].classList.add('correct');
+            feedback.textContent = selectedIndex === -1 ? "Time's up!" : "Incorrect answer.";
+            feedback.style.color = "red";
+        }
+
+        nextBtn.style.display = 'inline-block';
+        updateProgress();
+    }
+
+    function updateProgress() {
+        const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
+        progressFill.style.width = progress + '%';
+    }
+
+    function loadNextQuestion() {
+        currentQuestionIndex++;
+        if (currentQuestionIndex < questions.length) {
+            loadQuestion();
+        } else {
+            showFinalResults();
+        }
+    }
+
+    function showFinalResults() {
+        questionText.textContent = "Quiz Complete!";
+        groupTitle.textContent = "Final Score";
+        optionsContainer.innerHTML = `<h2>You scored ${score} out of ${questions.length}</h2>`;
+        feedback.textContent = "";
+        nextBtn.textContent = "Restart Quiz";
+        nextBtn.onclick = () => location.reload();
+        nextBtn.style.display = 'inline-block';
+        timerDisplay.style.display = 'none';
+    }
+
+    // Initial load
+    loadQuestion();
+</script>
+
+</body>
+</html>
