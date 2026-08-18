@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interactive MCQ · Wh– & Compound</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: linear-gradient(145deg, #f7efe6 0%, #ecdfd1 100%);
+      font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1.5rem;
+    }
+
+    .quiz-container {
+      max-width: 900px;
+      width: 100%;
+      background: rgba(255, 250, 242, 0.85);
+      backdrop-filter: blur(4px);
+      border-radius: 70px 70px 50px 50px;
+      padding: 2.2rem 2.5rem 2.8rem;
+      box-shadow: 0 30px 50px -20px #2f1d0e, 0 10px 20px rgba(0,0,0,0.04);
+      border: 2px solid #f2e3d3;
+      position: relative;
+      transition: 0.2s;
+    }
+
+    /* ----- top-right box: name & email (square-ish) ----- */
+    .prepared-box {
+      position: absolute;
+      top: 1.5rem;
+      right: 2.2rem;
+      background: #2a1c11;
+      color: #f2e0cc;
+      padding: 0.6rem 1.6rem 0.6rem 1.6rem;
+      border-radius: 28px 28px 28px 4px;
+      box-shadow: 0 10px 0 #4f3421, 0 6px 18px rgba(0,0,0,0.2);
+      border: 2px solid #c8a582;
+      text-align: right;
+      font-weight: 600;
+      line-height: 1.5;
+      letter-spacing: 0.3px;
+      max-width: 240px;
+    }
+
+    .prepared-box .name {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #fbdfbe;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+
+    .prepared-box .name i {
+      color: #e8b181;
+    }
+
+    .prepared-box .email {
+      font-size: 0.85rem;
+      font-weight: 400;
+      color: #e0c7ae;
+      background: #3f2c1c;
+      padding: 0.1rem 1rem;
+      border-radius: 60px;
+      display: inline-block;
+      margin-top: 2px;
+      border: 1px solid #6f4e33;
+    }
+
+    /* ----- big heading & question number circle ----- */
+    .header-area {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 0.2rem;
+      margin-bottom: 0.8rem;
+      gap: 10px 20px;
+    }
+
+    .big-title h1 {
+      font-size: 2.8rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #3d2618, #70452b);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -0.5px;
+      line-height: 1.1;
+    }
+
+    .big-title h2 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #5b3f2c;
+      background: #efe0cf;
+      display: inline-block;
+      padding: 0.1rem 1.8rem;
+      border-radius: 60px;
+      margin-top: 4px;
+      box-shadow: inset 0 -3px 0 #b08869;
+    }
+
+    /* question number circle (bold, big) */
+    .q-number-circle {
+      background: #2c1c10;
+      color: #f5e3cf;
+      font-size: 2.8rem;
+      font-weight: 800;
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 10px 0 #5b3d29, 0 10px 25px rgba(0,0,0,0.2);
+      border: 3px solid #dbb48b;
+      transition: 0.15s;
+      flex-shrink: 0;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    /* progress bar */
+    .progress-wrap {
+      width: 100%;
+      background: #e1cfbc;
+      height: 8px;
+      border-radius: 60px;
+      margin: 0.2rem 0 1.8rem 0;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 5%;
+      background: #7a5a40;
+      border-radius: 60px;
+      transition: width 0.4s ease;
+    }
+
+    /* question card */
+    .question-card {
+      background: #fefcf7;
+      border-radius: 48px 48px 28px 28px;
+      padding: 1.8rem 2rem 1.6rem;
+      border: 2px solid #e4d1bf;
+      box-shadow: 0 12px 24px -12px #33201140;
+      margin-bottom: 0.2rem;
+    }
+
+    .q-text {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #1f140b;
+      margin-bottom: 1.5rem;
+      padding-left: 8px;
+      border-left: 12px solid #b48158;
+      padding-left: 1.2rem;
+      letter-spacing: -0.2px;
+    }
+
+    .options-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px 25px;
+      margin-bottom: 0.8rem;
+    }
+
+    .option-btn {
+      background: #f5ece3;
+      border: 3px solid #dcc6b4;
+      border-radius: 60px;
+      padding: 0.7rem 1.2rem 0.7rem 1.8rem;
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: #24170e;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      transition: 0.12s;
+      box-shadow: 0 4px 0 #b39379;
+      letter-spacing: 0.2px;
+    }
+
+    .option-btn:hover:not(.disabled-opt) {
+      transform: scale(1.02);
+      background: #f2e5d9;
+      border-color: #b48b6b;
+    }
+
+    .option-btn i {
+      color: #8c5f3e;
+      font-size: 1.2rem;
+      width: 1.6rem;
+      text-align: center;
+    }
+
+    .option-btn.correct-selected {
+      background: #b7dfb7;
+      border-color: #1e7a3a;
+      box-shadow: 0 4px 0 #1a5e2e;
+      color: #0f3d1f;
+    }
+
+    .option-btn.wrong-selected {
+      background: #f7c9c9;
+      border-color: #b14141;
+      box-shadow: 0 4px 0 #7a2b2b;
+      color: #5e1f1f;
+    }
+
+    .option-btn.disabled-opt {
+      cursor: default;
+      opacity: 0.7;
+      filter: grayscale(0.2);
+    }
+
+    .option-btn.show-correct {
+      background: #b7dfb7;
+      border-color: #1e7a3a;
+      box-shadow: 0 4px 0 #1a5e2e;
+    }
+
+    .feedback-message {
+      margin-top: 1.2rem;
+      font-size: 1.6rem;
+      font-weight: 700;
+      padding: 0.4rem 1.8rem;
+      border-radius: 60px;
+      display: inline-block;
+      background: #f3e7db;
+      border-left: 12px solid #7a5a40;
+    }
+
+    .feedback-message i {
+      margin-right: 14px;
+    }
+
+    .footer-note {
+      margin-top: 2.2rem;
+      text-align: center;
+      font-weight: 500;
+      color: #6f543d;
+      border-top: 2px solid #decbb9;
+      padding-top: 1.2rem;
+      display: flex;
+      justify-content: center;
+      gap: 25px;
+      flex-wrap: wrap;
+      font-size: 1rem;
+    }
+
+    /* responsive */
+    @media (max-width: 700px) {
+      .quiz-container { padding: 1.5rem 1.2rem; }
+      .prepared-box {
+        position: relative;
+        top: 0;
+        right: 0;
+        margin-left: auto;
+        margin-bottom: 1rem;
+        border-radius: 28px 8px 28px 8px;
+      }
+      .header-area { flex-direction: column; align-items: flex-start; }
+      .q-number-circle { width: 70px; height: 70px; font-size: 2.2rem; align-self: flex-start; }
+      .q-text { font-size: 1.6rem; }
+      .options-grid { grid-template-columns: 1fr; }
+      .option-btn { font-size: 1.2rem; }
+    }
+
+    @media (max-width: 480px) {
+      .big-title h1 { font-size: 2rem; }
+    }
+  </style>
+</head>
+<body>
+<div class="quiz-container" id="quizContainer">
+
+  <!-- top right: name & email -->
+  <div class="prepared-box">
+    <div class="name"><i class="fas fa-user-graduate"></i> N. Regmi</div>
+    <div class="email"><i class="fas fa-envelope" style="margin-right: 5px;"></i> nregmi511@gmail.com</div>
+  </div>
+
+  <!-- header with big title + question circle -->
+  <div class="header-area">
+    <div class="big-title">
+      <h1>❓ Wh– & Compound</h1>
+      <h2><i class="fas fa-pencil-alt" style="margin-right: 10px;"></i> interactive quiz</h2>
+    </div>
+    <div class="q-number-circle" id="qNumCircle">1</div>
+  </div>
+
+  <!-- progress bar -->
+  <div class="progress-wrap">
+    <div class="progress-fill" id="progressFill"></div>
+  </div>
+
+  <!-- dynamic question area -->
+  <div id="questionCard" class="question-card">
+    <!-- injected by js -->
+  </div>
+
+  <div class="footer-note">
+    <span><i class="fas fa-hand-pointer"></i> click an option → feedback</span>
+    <span><i class="fas fa-arrow-right"></i> auto‑next in 1.5s</span>
+    <span><i class="fas fa-circle"></i> bold question number</span>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>
+<script>
+  (function(){
+    // ---------- question data (20 items) ----------
+    const questions = [
+      { q: '______ is your name?', options: ['What', 'How', 'Which', 'Why'], correct: 0 },
+      { q: '______ are you late today?', options: ['What', 'How', 'Which', 'Why'], correct: 3 },
+      { q: '______ do you know about this topic?', options: ['What', 'How', 'Which', 'Why'], correct: 0 },
+      { q: '______ did you go to the market?', options: ['What', 'How', 'Which', 'Why'], correct: 3 },
+      { q: '______ is your favourite subject?', options: ['What', 'How', 'Which', 'Why'], correct: 0 },
+      { q: '______ do you solve this problem?', options: ['What', 'How', 'Which', 'Why'], correct: 1 },
+      { q: '______ did he say to you?', options: ['What', 'How', 'Which', 'Why'], correct: 0 },
+      { q: 'I don\'t understand ______ you are saying.', options: ['what', 'how', 'which', 'why'], correct: 0 },
+      { q: '______ book do you prefer, this one or that?', options: ['What', 'How', 'Which', 'Why'], correct: 2 },
+      { q: '______ he succeeds or fails, he will try.', options: ['What', 'How', 'Which', 'Why'], correct: 1 },  // key says (b) How
+      { q: 'Take ______ pen you like.', options: ['whichever', 'whatever', 'whichever', 'whichever'], correct: 3 },
+      { q: '______ you do, be honest.', options: ['Whatever', 'Whichever', 'Whatever'], correct: 2 },
+      { q: 'You can choose ______ answer you want.', options: ['whichever', 'whatever', 'whichever'], correct: 1 },
+      { q: 'Eat ______ you like.', options: ['whatever', 'whichever', 'whatever'], correct: 0 },
+      { q: '______ is the reason for your anger?', options: ['What', 'How', 'Which', 'Why'], correct: 3 },
+      { q: '______ do you think about this idea?', options: ['What', 'How', 'Which', 'Why'], correct: 0 },
+      { q: '______ wonderful the view is!', options: ['What', 'How', 'Which', 'Why'], correct: 0 }, // key says a
+      { q: 'That is ______ I was looking for.', options: ['what', 'which', 'how', 'why'], correct: 1 }, // key says b
+      { q: '______ he comes or not, we will start.', options: ['What', 'How', 'Which', 'Why'], correct: 3 }, // key d
+      { q: 'This is the best solution ______ I can offer.', options: ['what', 'which', 'how', 'why'], correct: 0 } // key a
+    ];
+
+    const total = questions.length;
+    let currentIndex = 0;
+    let isAnswered = false;
+    let timeoutId = null;
+
+    const qNumCircle = document.getElementById('qNumCircle');
+    const progressFill = document.getElementById('progressFill');
+    const questionCard = document.getElementById('questionCard');
+
+    // render question by index
+    function renderQuestion(index) {
+      // clear any pending timeout
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+        timeoutId = null;
+      }
+      isAnswered = false;
+
+      const qData = questions[index];
+      if (!qData) return;
+
+      // update circle & progress
+      qNumCircle.textContent = index + 1;
+      const progress = ((index + 1) / total) * 100;
+      progressFill.style.width = progress + '%';
+
+      // build options html with letter prefixes
+      const letters = ['a', 'b', 'c', 'd'];
+      let optionsHtml = '';
+      qData.options.forEach((opt, idx) => {
+        const letter = letters[idx] || '?';
+        optionsHtml += `
+          <div class="option-btn" data-optindex="${idx}" data-letter="${letter}">
+            <i class="fas fa-circle"></i> (${letter}) ${opt}
+          </div>
+        `;
+      });
+
+      const html = `
+        <div class="q-text">${qData.q}</div>
+        <div class="options-grid" id="optionsGrid">
+          ${optionsHtml}
+        </div>
+        <div id="feedbackArea" style="margin-top: 1rem; min-height: 3.8rem;">
+          <!-- feedback will appear here -->
+        </div>
+      `;
+
+      questionCard.innerHTML = html;
+
+      // attach click listeners to option buttons
+      const optBtns = document.querySelectorAll('.option-btn');
+      optBtns.forEach(btn => {
+        btn.addEventListener('click', optionClickHandler);
+      });
+    }
+
+    // ----- option click handler -----
+    function optionClickHandler(e) {
+      const btn = e.currentTarget;
+      if (isAnswered) return; // already answered
+      const parentGrid = document.getElementById('optionsGrid');
+      if (!parentGrid) return;
+
+      const optIndex = parseInt(btn.dataset.optindex, 10);
+      const currentQ = questions[currentIndex];
+      const isCorrect = (optIndex === currentQ.correct);
+
+      // disable all options
+      const allOpts = parentGrid.querySelectorAll('.option-btn');
+      allOpts.forEach(opt => opt.classList.add('disabled-opt'));
+
+      // highlight selected
+      if (isCorrect) {
+        btn.classList.add('correct-selected');
+      } else {
+        btn.classList.add('wrong-selected');
+        // also show the correct answer
+        allOpts.forEach((opt, idx) => {
+          if (idx === currentQ.correct) {
+            opt.classList.add('show-correct');
+          }
+        });
+      }
+
+      // feedback message
+      const feedbackArea = document.getElementById('feedbackArea');
+      if (feedbackArea) {
+        const letter = btn.dataset.letter || '?';
+        const correctLetter = ['a','b','c','d'][currentQ.correct] || '?';
+        if (isCorrect) {
+          feedbackArea.innerHTML = `<div class="feedback-message" style="background: #c8e6c8; border-left-color: #1f7a3a;"><i class="fas fa-check-circle" style="color: #1f7a3a;"></i> ✅ Correct! (${letter})</div>`;
+        } else {
+          feedbackArea.innerHTML = `<div class="feedback-message" style="background: #f7d0d0; border-left-color: #b14141;"><i class="fas fa-times-circle" style="color: #b14141;"></i> ❌ Oops! correct: (${correctLetter})</div>`;
+        }
+      }
+
+      isAnswered = true;
+
+      // schedule next question after 1.5 sec
+      timeoutId = setTimeout(() => {
+        if (currentIndex < total - 1) {
+          currentIndex++;
+          renderQuestion(currentIndex);
+        } else {
+          // quiz finished
+          questionCard.innerHTML = `
+            <div style="text-align: center; padding: 2.5rem 1rem;">
+              <div style="font-size: 3.5rem; font-weight: 800; color: #2b1f14;">🎉</div>
+              <div style="font-size: 2.2rem; font-weight: 700; color: #2b1f14; margin-top: 0.5rem;">All done!</div>
+              <div style="font-size: 1.4rem; color: #5a402e; margin-top: 0.5rem;">You completed all ${total} questions.</div>
+              <div style="margin-top: 2rem;">
+                <button id="restartBtn" style="background: #2d1c10; color: #f6e3cf; border: none; font-size: 1.6rem; font-weight: 700; padding: 0.6rem 2.8rem; border-radius: 80px; box-shadow: 0 8px 0 #5a3d2a; cursor: pointer; transition: 0.08s;">↻ Restart</button>
+              </div>
+            </div>
+          `;
+          document.getElementById('restartBtn').addEventListener('click', () => {
+            currentIndex = 0;
+            renderQuestion(0);
+          });
+          // update progress & circle
+          qNumCircle.textContent = '✓';
+          progressFill.style.width = '100%';
+          timeoutId = null;
+        }
+      }, 1500);
+    }
+
+    // init
+    renderQuestion(0);
+
+    // extra: handle window resize / cleanup
+    window.addEventListener('beforeunload', function() {
+      if (timeoutId) clearTimeout(timeoutId);
+    });
+
+  })();
+</script>
+</body>
+</html>
