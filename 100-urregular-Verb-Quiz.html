@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>Irregular Verbs Quiz – Narayan Sir</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+      background: linear-gradient(145deg, #f9f3e8 0%, #ffe9d4 100%);
+      min-height: 100vh;
+      padding: 16px 12px 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .container {
+      max-width: 560px;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border-radius: 40px;
+      padding: 24px 20px 30px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15), 0 8px 16px rgba(0, 0, 0, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.5);
+    }
+    h1 {
+      font-size: 28px;
+      font-weight: 800;
+      color: #2d1b0e;
+      text-align: center;
+      letter-spacing: -0.5px;
+      margin-bottom: 2px;
+    }
+    .subhead {
+      text-align: center;
+      font-weight: 600;
+      font-size: 18px;
+      color: #7a4a2e;
+      background: #fae1c3;
+      display: inline-block;
+      padding: 4px 22px;
+      border-radius: 40px;
+      margin: 0 auto 18px;
+      letter-spacing: 0.3px;
+      box-shadow: inset 0 -2px 0 #c28a5e;
+    }
+    .controls {
+      background: #fcf6ed;
+      border-radius: 32px;
+      padding: 20px 18px;
+      margin-bottom: 24px;
+      box-shadow: inset 0 2px 8px rgba(0,0,0,0.04), 0 6px 12px rgba(0,0,0,0.06);
+    }
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 12px 16px;
+      margin-bottom: 12px;
+    }
+    .row:last-child { margin-bottom: 0; }
+    .label {
+      font-weight: 700;
+      font-size: 15px;
+      color: #4d3220;
+      min-width: 60px;
+    }
+    select, input[type="number"] {
+      background: white;
+      border: 2px solid #dbb594;
+      border-radius: 30px;
+      padding: 8px 14px;
+      font-size: 16px;
+      font-weight: 600;
+      color: #2d1b0e;
+      outline: none;
+      transition: 0.2s;
+      flex: 1;
+      min-width: 70px;
+    }
+    select:focus, input:focus {
+      border-color: #b56f3a;
+      box-shadow: 0 0 0 3px rgba(181, 111, 58, 0.2);
+    }
+    .range-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .range-group input {
+      width: 80px;
+      flex: 0 1 80px;
+    }
+    .range-group span {
+      font-weight: 600;
+      color: #5f3d26;
+    }
+    .btn-start {
+      background: #d97c3a;
+      border: none;
+      border-radius: 60px;
+      padding: 14px 28px;
+      font-size: 22px;
+      font-weight: 800;
+      color: white;
+      width: 100%;
+      box-shadow: 0 8px 0 #8f4f24, 0 6px 16px rgba(217, 124, 58, 0.4);
+      transition: all 0.07s ease;
+      cursor: pointer;
+      letter-spacing: 0.5px;
+      margin-top: 6px;
+    }
+    .btn-start:active {
+      transform: translateY(6px);
+      box-shadow: 0 2px 0 #8f4f24;
+    }
+    .btn-start:disabled {
+      opacity: 0.5;
+      transform: translateY(4px);
+      box-shadow: 0 4px 0 #8f4f24;
+      pointer-events: none;
+    }
+    .quiz-area {
+      display: none;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .quiz-area.active {
+      display: flex;
+    }
+    .progress {
+      font-weight: 700;
+      font-size: 18px;
+      color: #3f281a;
+      background: #f0dfce;
+      padding: 8px 16px;
+      border-radius: 40px;
+      text-align: center;
+      align-self: center;
+      width: auto;
+      min-width: 140px;
+    }
+    .question-card {
+      background: white;
+      border-radius: 32px;
+      padding: 28px 20px 20px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.04);
+    }
+    .q-text {
+      font-size: 24px;
+      font-weight: 700;
+      line-height: 1.4;
+      color: #1f1309;
+      margin-bottom: 24px;
+      word-break: break-word;
+    }
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .option {
+      background: #f5ede5;
+      border: 3px solid transparent;
+      border-radius: 60px;
+      padding: 14px 20px;
+      font-size: 23px;
+      font-weight: 700;
+      color: #2d1b0e;
+      cursor: pointer;
+      transition: all 0.15s;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+      word-break: break-word;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .option:hover:not(.disabled) {
+      background: #e7d8c9;
+      transform: scale(1.01);
+    }
+    .option .letter {
+      display: inline-block;
+      width: 34px;
+      height: 34px;
+      background: #dbb594;
+      border-radius: 50%;
+      color: white;
+      text-align: center;
+      line-height: 34px;
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+    .option.correct {
+      border-color: #2b8c4a;
+      background: #c8f0d6;
+    }
+    .option.correct .letter {
+      background: #2b8c4a;
+    }
+    .option.wrong {
+      border-color: #c73b3b;
+      background: #f8d4d4;
+    }
+    .option.wrong .letter {
+      background: #c73b3b;
+    }
+    .option.disabled {
+      pointer-events: none;
+      opacity: 0.7;
+    }
+    .option.show-correct {
+      border-color: #2b8c4a;
+      background: #c8f0d6;
+    }
+    .option.show-correct .letter {
+      background: #2b8c4a;
+    }
+    .score-area {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      background: white;
+      border-radius: 36px;
+      padding: 32px 20px;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    }
+    .score-area.active {
+      display: flex;
+    }
+    .score-number {
+      font-size: 56px;
+      font-weight: 900;
+      color: #d97c3a;
+      line-height: 1.2;
+    }
+    .score-label {
+      font-size: 22px;
+      font-weight: 600;
+      color: #3f281a;
+      margin-top: 4px;
+    }
+    .feedback {
+      font-size: 28px;
+      font-weight: 700;
+      margin: 16px 0 8px;
+      padding: 6px 24px;
+      border-radius: 60px;
+      background: #fae1c3;
+    }
+    .btn-reset {
+      background: #4d3220;
+      border: none;
+      border-radius: 60px;
+      padding: 14px 40px;
+      font-size: 20px;
+      font-weight: 700;
+      color: white;
+      margin-top: 20px;
+      cursor: pointer;
+      box-shadow: 0 6px 0 #2d1b0e;
+      transition: 0.07s;
+    }
+    .btn-reset:active {
+      transform: translateY(4px);
+      box-shadow: 0 2px 0 #2d1b0e;
+    }
+    .attribution {
+      margin-top: 20px;
+      font-size: 14px;
+      color: #7a5f48;
+      text-align: center;
+      opacity: 0.8;
+    }
+    /* mobile tweaks */
+    @media (max-width: 480px) {
+      .container { padding: 16px 12px; }
+      .q-text { font-size: 22px; }
+      .option { font-size: 20px; padding: 12px 16px; }
+      .option .letter { width: 30px; height: 30px; line-height: 30px; font-size: 16px; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>📘 Irregular Verbs</h1>
+  <div style="text-align:center;"><span class="subhead">Narayan Sir</span></div>
+
+  <!-- Controls -->
+  <div class="controls" id="controls">
+    <div class="row">
+      <span class="label">Questions</span>
+      <select id="qCountSelect">
+        <option value="5">5</option>
+        <option value="10" selected>10</option>
+        <option value="20">20</option>
+        <option value="30">30</option>
+        <option value="40">40</option>
+        <option value="50">50</option>
+        <option value="80">80</option>
+        <option value="all">All</option>
+      </select>
+    </div>
+    <div class="row">
+      <span class="label">Range</span>
+      <div class="range-group">
+        <span>From</span>
+        <input type="number" id="rangeFrom" value="1" min="1" max="100">
+        <span>To</span>
+        <input type="number" id="rangeTo" value="100" min="1" max="100">
+      </div>
+    </div>
+    <button class="btn-start" id="startBtn">▶ Start Quiz</button>
+  </div>
+
+  <!-- Quiz Area -->
+  <div class="quiz-area" id="quizArea">
+    <div class="progress" id="progress">Question 1 / 10</div>
+    <div class="question-card" id="questionCard">
+      <div class="q-text" id="qText">Loading...</div>
+      <div class="options" id="optionsContainer"></div>
+    </div>
+  </div>
+
+  <!-- Score Area -->
+  <div class="score-area" id="scoreArea">
+    <div class="score-number" id="scoreNum">0</div>
+    <div class="score-label">out of <span id="totalQ">0</span> correct</div>
+    <div class="feedback" id="feedbackMsg">🌟 Great!</div>
+    <button class="btn-reset" id="resetBtn">🔄 Try Again</button>
+  </div>
+  <div class="attribution">Narayan Sir • 100 Irregular Verbs</div>
+</div>
+
+<script>
+  // --------------------------------------------------------------
+  // 100 QUESTIONS DATA (copied from MD file)
+  // --------------------------------------------------------------
+  const questionsData = [
+    { id:1, q:"What is the present form (V1) of 'arisen' (उठ्नु)?", opts:["arose","arisen","arise","awake"], correct:"C" },
+    { id:2, q:"What is the past form (V2) of 'Awake' (ब्यूँझनु)?", opts:["awoke","awoken","awake","arise"], correct:"A" },
+    { id:3, q:"What is the Past Participle (V3) of 'Be' (हुनु)?", opts:["be","been","was","were"], correct:"B" },
+    { id:4, q:"What is the present form (V1) of 'borne' (सहनु / जन्माउनु)?", opts:["bore","borne","bear","beat"], correct:"C" },
+    { id:5, q:"What is the past form (V2) of 'Beat' (पिट्नु)?", opts:["beaten","bite","blow","beat"], correct:"D" },
+    { id:6, q:"What is the Past Participle (V3) of 'Become' (हुनु / बन्नु)?", opts:["become","became","be","been"], correct:"A" },
+    { id:7, q:"What is the present form (V1) of 'begun' (सुरु गर्नु)?", opts:["begin","began","begun","bend"], correct:"A" },
+    { id:8, q:"What is the past form (V2) of 'Bend' (निहुरिनु / बाङ्गो पार्नु)?", opts:["bend","bent","bound","built"], correct:"B" },
+    { id:9, q:"What is the Past Participle (V3) of 'Bet' (शर्त लगाउनु)?", opts:["betted","beat","bet","begun"], correct:"C" },
+    { id:10, q:"What is the present form (V1) of 'bitten' (टोक्नु)?", opts:["bit","bitten","bite","beat"], correct:"C" },
+    { id:11, q:"What is the past form (V2) of 'Bleed' (रगत बग्नु)?", opts:["bled","bleed","blown","broke"], correct:"A" },
+    { id:12, q:"What is the Past Participle (V3) of 'Blow' (फुक्नु / उडाउनु)?", opts:["blew","blown","blow","bled"], correct:"B" },
+    { id:13, q:"What is the present form (V1) of 'broken' (भाँच्नु)?", opts:["broke","broken","break","bring"], correct:"C" },
+    { id:14, q:"What is the past form (V2) of 'Breed' (प्रजनन गर्नु / पाल्नु)?", opts:["breed","broke","bring","bred"], correct:"D" },
+    { id:15, q:"What is the Past Participle (V3) of 'Bring' (ल्याउनु)?", opts:["brought","bring","bought","built"], correct:"A" },
+    { id:16, q:"What is the present form (V1) of 'broadcast' (प्रसारण गर्नु)?", opts:["broadcast","broadcasts","broadcasted","bring"], correct:"A" },
+    { id:17, q:"What is the past form (V2) of 'Build' (निर्माण गर्नु)?", opts:["build","built","burn","burst"], correct:"B" },
+    { id:18, q:"What is the Past Participle (V3) of 'Burn' (जलाउनु / डढ्नु)?", opts:["burn","burned","burnt","built"], correct:"C" },
+    { id:19, q:"What is the present form (V1) of 'burst' (फुट्नु / च्यातिनु)?", opts:["bursted","burns","burst","break"], correct:"C" },
+    { id:20, q:"What is the past form (V2) of 'Buy' (किन्नु)?", opts:["bought","buy","brought","built"], correct:"A" },
+    { id:21, q:"What is the Past Participle (V3) of 'Cast' (फाल्नु / खन्याउनु)?", opts:["casted","cast","cost","cut"], correct:"B" },
+    { id:22, q:"What is the present form (V1) of 'caught' (समात्नु)?", opts:["caught","choose","catch","come"], correct:"C" },
+    { id:23, q:"What is the past form (V2) of 'Choose' (छान्नु)?", opts:["choose","chosen","come","chose"], correct:"D" },
+    { id:24, q:"What is the Past Participle (V3) of 'Cling' (टाँसिनु / समातिरहनु)?", opts:["clung","cling","clang","come"], correct:"A" },
+    { id:25, q:"What is the present form (V1) of 'come' (आउनु)?", opts:["come","came","cost","cut"], correct:"A" },
+    { id:26, q:"What is the past form (V2) of 'Cost' (मूल्य पर्नु)?", opts:["costed","cost","cut","come"], correct:"B" },
+    { id:27, q:"What is the Past Participle (V3) of 'Creep' (घस्रिनु / लुकी-लुकी जानु)?", opts:["creep","creped","crept","cut"], correct:"C" },
+    { id:28, q:"What is the present form (V1) of 'cut' (काट्नु)?", opts:["cutted","cuts","cut","cost"], correct:"C" },
+    { id:29, q:"What is the past form (V2) of 'Deal' (व्यवहार गर्नु / बाँड्नु)?", opts:["dealt","deal","dug","did"], correct:"A" },
+    { id:30, q:"What is the Past Participle (V3) of 'Dig' (खन्नु)?", opts:["dig","dug","done","drawn"], correct:"B" },
+    { id:31, q:"What is the present form (V1) of 'done' (गर्नु)?", opts:["did","done","do","draw"], correct:"C" },
+    { id:32, q:"What is the past form (V2) of 'Draw' (कोर्नु / तान्नु)?", opts:["draw","drawn","done","drew"], correct:"D" },
+    { id:33, q:"What is the Past Participle (V3) of 'Dream' (सपना देख्नु)?", opts:["dreamt","dream","dreamed","drunk"], correct:"A" },
+    { id:34, q:"What is the present form (V1) of 'drunk' (पिउनु)?", opts:["drink","drank","drunk","drive"], correct:"A" },
+    { id:35, q:"What is the past form (V2) of 'Drive' (चलाउनु / हाँक्नु)?", opts:["drive","drove","driven","drunk"], correct:"B" },
+    { id:36, q:"What is the Past Participle (V3) of 'Eat' (खानु)?", opts:["eat","ate","eaten","fell"], correct:"C" },
+    { id:37, q:"What is the present form (V1) of 'fallen' (खस्नु)?", opts:["fell","fallen","fall","feed"], correct:"C" },
+    { id:38, q:"What is the past form (V2) of 'Feed' (खुवाउनु)?", opts:["fed","feed","fell","felt"], correct:"A" },
+    { id:39, q:"What is the Past Participle (V3) of 'Feel' (महसुस गर्नु)?", opts:["feel","felt","fed","fought"], correct:"B" },
+    { id:40, q:"What is the present form (V1) of 'fought' (लड्नु)?", opts:["fought","find","fight","flee"], correct:"C" },
+    { id:41, q:"What is the past form (V2) of 'Find' (भेट्टाउनु)?", opts:["find","flew","fled","found"], correct:"D" },
+    { id:42, q:"What is the Past Participle (V3) of 'Flee' (भाग्नु)?", opts:["fled","flee","flew","flown"], correct:"A" },
+    { id:43, q:"What is the present form (V1) of 'flung' (फ्याँक्नु)?", opts:["fling","flung","flew","flown"], correct:"A" },
+    { id:44, q:"What is the past form (V2) of 'Fly' (उड्नु)?", opts:["fly","flew","flown","flung"], correct:"B" },
+    { id:45, q:"What is the Past Participle (V3) of 'Forbid' (निषेध गर्नु)?", opts:["forbid","forbade","forbidden","forgot"], correct:"C" },
+    { id:46, q:"What is the present form (V1) of 'forgotten' (बिर्सनु)?", opts:["forgot","forgotten","forget","forgive"], correct:"C" },
+    { id:47, q:"What is the past form (V2) of 'Forgive' (माफ गर्नु)?", opts:["forgave","forgive","forgiven","forgot"], correct:"A" },
+    { id:48, q:"What is the Past Participle (V3) of 'Freeze' (जम्नु / जमाउनु)?", opts:["freeze","frozen","froze","gave"], correct:"B" },
+    { id:49, q:"What is the present form (V1) of 'got' (पाउनु / हुनु)?", opts:["got","given","get","gone"], correct:"C" },
+    { id:50, q:"What is the past form (V2) of 'Give' (दिनु)?", opts:["give","given","go","gave"], correct:"D" },
+    { id:51, q:"What is the Past Participle (V3) of 'Go' (जानु)?", opts:["gone","go","went","grew"], correct:"A" },
+    { id:52, q:"What is the present form (V1) of 'grown' (बढ्नु / हुर्कनु)?", opts:["grow","grew","grown","hang"], correct:"A" },
+    { id:53, q:"What is the past form (V2) of 'Hang' (झुन्ड्याउनु / झुण्डिनु)?", opts:["hang","hung","hanged","have"], correct:"B" },
+    { id:54, q:"What is the Past Participle (V3) of 'Have' (हुनु / पाउनु)?", opts:["have","has","had","heard"], correct:"C" },
+    { id:55, q:"What is the present form (V1) of 'heard' (सुन्नु)?", opts:["heard","hide","hear","hit"], correct:"C" },
+    { id:56, q:"What is the past form (V2) of 'Hide' (लुकाउनु / लुक्नु)?", opts:["hid","hide","hidden","hit"], correct:"A" },
+    { id:57, q:"What is the Past Participle (V3) of 'Hit' (हिर्काउनु / ठोक्नु)?", opts:["hitted","hit","held","hurt"], correct:"B" },
+    { id:58, q:"What is the present form (V1) of 'held' (समात्नु / धारण गर्नु)?", opts:["held","hit","hold","hurt"], correct:"C" },
+    { id:59, q:"What is the past form (V2) of 'Hurt' (दुखाउनु / चोट पुर्याउनु)?", opts:["hurted","held","hit","hurt"], correct:"D" },
+    { id:60, q:"What is the Past Participle (V3) of 'Keep' (राख्नु)?", opts:["kept","keep","knelt","knew"], correct:"A" },
+    { id:61, q:"What is the present form (V1) of 'knelt' (घुँडा टेक्नु)?", opts:["kneel","knelt","knew","know"], correct:"A" },
+    { id:62, q:"What is the past form (V2) of 'Know' (जान्नु / थाहा पाउनु)?", opts:["know","knew","known","knelt"], correct:"B" },
+    { id:63, q:"What is the Past Participle (V3) of 'Lay' (राख्नु / बिछ्याउनु)?", opts:["lay","lain","laid","led"], correct:"C" },
+    { id:64, q:"What is the present form (V1) of 'led' (नेतृत्व गर्नु / डोर्याउनु)?", opts:["led","leave","lead","lent"], correct:"C" },
+    { id:65, q:"What is the past form (V2) of 'Lean' (झुक्नु / टेक्नु)?", opts:["leant","lean","leapt","learned"], correct:"A" },
+    { id:66, q:"What is the Past Participle (V3) of 'Leap' (फाल गर्नु / हाम फाल्नु)?", opts:["leap","leapt","leaped","left"], correct:"B" },
+    { id:67, q:"What is the present form (V1) of 'learnt' (सिक्नु)?", opts:["learnt","leave","learn","lend"], correct:"C" },
+    { id:68, q:"What is the past form (V2) of 'Leave' (छोड्नु / जानु)?", opts:["leave","lent","leapt","left"], correct:"D" },
+    { id:69, q:"What is the Past Participle (V3) of 'Lend' (ऋण दिनु)?", opts:["lent","lend","left","lay"], correct:"A" },
+    { id:70, q:"What is the present form (V1) of 'let' (दिनु / अनुमति दिनु)?", opts:["let","laid","lay","light"], correct:"A" },
+    { id:71, q:"What is the past form (V2) of 'Lie' (सुत्नु / पल्टिनु)?", opts:["lie","lay","lain","laid"], correct:"B" },
+    { id:72, q:"What is the Past Participle (V3) of 'Light' (बाल्नु / उज्यालो पार्नु)?", opts:["light","lighted","lit","lay"], correct:"C" },
+    { id:73, q:"What is the present form (V1) of 'lost' (हराउनु / गुमाउनु)?", opts:["lost","make","lose","mean"], correct:"C" },
+    { id:74, q:"What is the past form (V2) of 'Make' (बनाउनु)?", opts:["made","make","mean","met"], correct:"A" },
+    { id:75, q:"What is the Past Participle (V3) of 'Mean' (अर्थ लाग्नु / भन्नु)?", opts:["mean","meant","made","met"], correct:"B" },
+    { id:76, q:"What is the present form (V1) of 'met' (भेट्नु)?", opts:["met","mean","meet","pay"], correct:"C" },
+    { id:77, q:"What is the past form (V2) of 'Pay' (तिर्नु)?", opts:["pay","put","quit","paid"], correct:"D" },
+    { id:78, q:"What is the Past Participle (V3) of 'Put' (राख्नु)?", opts:["put","putted","paid","quit"], correct:"A" },
+    { id:79, q:"What is the present form (V1) of 'quit' (छोड्नु / त्याग्नु)?", opts:["quit","quitted","read","ride"], correct:"A" },
+    { id:80, q:"What is the past form (V2) of 'Read' (पढ्नु)?", opts:["read","read","rode","rose"], correct:"B" },
+    { id:81, q:"What is the Past Participle (V3) of 'Ride' (सवारी चढ्नु / चलाउनु)?", opts:["ride","rode","ridden","ring"], correct:"C" },
+    { id:82, q:"What is the present form (V1) of 'rung' (बज्नु / घण्टी बजाउनु)?", opts:["rang","rung","ring","rise"], correct:"C" },
+    { id:83, q:"What is the past form (V2) of 'Rise' (उठ्नु / बढ्नु)?", opts:["rose","rise","risen","run"], correct:"A" },
+    { id:84, q:"What is the Past Participle (V3) of 'Run' (दौडनु)?", opts:["ran","run","ring","rise"], correct:"B" },
+    { id:85, q:"What is the present form (V1) of 'said' (भन्नु)?", opts:["said","see","say","seek"], correct:"C" },
+    { id:86, q:"What is the past form (V2) of 'See' (हेर्नु / देख्नु)?", opts:["see","seen","seek","saw"], correct:"D" },
+    { id:87, q:"What is the Past Participle (V3) of 'Seek' (खोज्नु)?", opts:["sought","seek","saw","seen"], correct:"A" },
+    { id:88, q:"What is the present form (V1) of 'sold' (बेच्नु)?", opts:["sell","sold","send","set"], correct:"A" },
+    { id:89, q:"What is the past form (V2) of 'Send' (पठाउनु)?", opts:["send","sent","sold","set"], correct:"B" },
+    { id:90, q:"What is the Past Participle (V3) of 'Set' (सेट गर्नु / राख्नु)?", opts:["setted","sewed","set","shown"], correct:"C" },
+    { id:91, q:"What is the present form (V1) of 'sewn' (सिउनु)?", opts:["sewed","sewn","sew","shake"], correct:"C" },
+    { id:92, q:"What is the past form (V2) of 'Shake' (हल्लाउनु / चलाउनु)?", opts:["shook","shake","shaken","shone"], correct:"A" },
+    { id:93, q:"What is the Past Participle (V3) of 'Shine' (चम्किनु / चम्काउनु)?", opts:["shine","shone","shined","shook"], correct:"B" },
+    { id:94, q:"What is the present form (V1) of 'shot' (गोली हान्नु / प्रहार गर्नु)?", opts:["shot","shone","shoot","show"], correct:"C" },
+    { id:95, q:"What is the past form (V2) of 'Show' (देखाउनु)?", opts:["show","shown","shook","showed"], correct:"D" },
+    { id:96, q:"What is the Past Participle (V3) of 'Shrink' (खुम्चिनु / साँघुरिनु)?", opts:["shrunk","shrink","shrank","shut"], correct:"A" },
+    { id:97, q:"What is the present form (V1) of 'shut' (बन्द गर्नु)?", opts:["shut","shutted","sing","sink"], correct:"A" },
+    { id:98, q:"What is the past form (V2) of 'Sing' (गाउनु)?", opts:["sing","sang","sung","sink"], correct:"B" },
+    { id:99, q:"What is the Past Participle (V3) of 'Sink' (डुब्नु)?", opts:["sink","sank","sunk","sit"], correct:"C" },
+    { id:100, q:"What is the present form (V1) of 'sat' (बस्नु)?", opts:["sat","sang","sit","sunk"], correct:"C" }
+  ];
+
+  // --------------------------------------------------------------
+  // QUIZ ENGINE
+  // --------------------------------------------------------------
+  let currentQuestions = [];
+  let currentIndex = 0;
+  let score = 0;
+  let timerId = null;
+  let isAnswering = false;
+
+  const controlsEl = document.getElementById('controls');
+  const startBtn = document.getElementById('startBtn');
+  const quizArea = document.getElementById('quizArea');
+  const scoreArea = document.getElementById('scoreArea');
+  const progressEl = document.getElementById('progress');
+  const qText = document.getElementById('qText');
+  const optionsContainer = document.getElementById('optionsContainer');
+  const scoreNum = document.getElementById('scoreNum');
+  const totalQSpan = document.getElementById('totalQ');
+  const feedbackMsg = document.getElementById('feedbackMsg');
+  const resetBtn = document.getElementById('resetBtn');
+  const qCountSelect = document.getElementById('qCountSelect');
+  const rangeFrom = document.getElementById('rangeFrom');
+  const rangeTo = document.getElementById('rangeTo');
+
+  function getSelectedRange() {
+    let from = parseInt(rangeFrom.value, 10);
+    let to = parseInt(rangeTo.value, 10);
+    if (isNaN(from) || from < 1) from = 1;
+    if (isNaN(to) || to > 100) to = 100;
+    if (from > to) { let tmp = from; from = to; to = tmp; }
+    return { from, to };
+  }
+
+  function shuffleArray(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+
+  function startQuiz() {
+    // Clear any previous timer
+    if (timerId) { clearTimeout(timerId); timerId = null; }
+    // Reset UI
+    score = 0;
+    currentIndex = 0;
+    isAnswering = false;
+    quizArea.classList.remove('active');
+    scoreArea.classList.remove('active');
+
+    // Get range
+    const { from, to } = getSelectedRange();
+    // Filter questions within range (IDs are 1-100)
+    const filtered = questionsData.filter(q => q.id >= from && q.id <= to);
+    if (filtered.length === 0) {
+      alert('No questions in that range. Please adjust.');
+      return;
+    }
+
+    // Determine count
+    let count = qCountSelect.value;
+    let numQuestions;
+    if (count === 'all') {
+      numQuestions = filtered.length;
+    } else {
+      numQuestions = parseInt(count, 10);
+      if (isNaN(numQuestions) || numQuestions < 1) numQuestions = 5;
+      if (numQuestions > filtered.length) numQuestions = filtered.length;
+    }
+
+    // Shuffle filtered and pick first numQuestions
+    const shuffled = shuffleArray([...filtered]);
+    currentQuestions = shuffled.slice(0, numQuestions);
+
+    // Hide controls, show quiz
+    controlsEl.style.display = 'none';
+    quizArea.classList.add('active');
+    scoreArea.classList.remove('active');
+
+    // Show first question
+    showQuestion();
+  }
+
+  function showQuestion() {
+    if (currentIndex >= currentQuestions.length) {
+      endQuiz();
+      return;
+    }
+    const q = currentQuestions[currentIndex];
+    qText.textContent = q.q;
+    // Build options
+    const letters = ['A', 'B', 'C', 'D'];
+    optionsContainer.innerHTML = '';
+    q.opts.forEach((opt, idx) => {
+      const div = document.createElement('div');
+      div.className = 'option';
+      div.dataset.letter = letters[idx];
+      div.innerHTML = `<span class="letter">${letters[idx]}</span> ${opt}`;
+      div.addEventListener('click', () => handleOptionClick(div, letters[idx], q.correct));
+      optionsContainer.appendChild(div);
+    });
+
+    // Update progress
+    progressEl.textContent = `Question ${currentIndex + 1} / ${currentQuestions.length}`;
+    isAnswering = false; // allow clicks
+  }
+
+  function handleOptionClick(el, selectedLetter, correctLetter) {
+    if (isAnswering) return;
+    isAnswering = true;
+
+    // Disable all options
+    const allOptions = document.querySelectorAll('.option');
+    allOptions.forEach(opt => opt.classList.add('disabled'));
+
+    // Highlight correct and wrong
+    let isCorrect = (selectedLetter === correctLetter);
+    if (isCorrect) {
+      score++;
+      el.classList.add('correct');
+    } else {
+      el.classList.add('wrong');
+      // Also show correct answer
+      allOptions.forEach(opt => {
+        if (opt.dataset.letter === correctLetter) {
+          opt.classList.add('show-correct');
+        }
+      });
+    }
+
+    // Auto advance after 1.5 sec
+    if (timerId) clearTimeout(timerId);
+    timerId = setTimeout(() => {
+      timerId = null;
+      currentIndex++;
+      showQuestion();
+    }, 1500);
+  }
+
+  function endQuiz() {
+    quizArea.classList.remove('active');
+    scoreArea.classList.add('active');
+    const total = currentQuestions.length;
+    scoreNum.textContent = score;
+    totalQSpan.textContent = total;
+    const pct = Math.round((score / total) * 100);
+    let msg = '';
+    if (pct === 100) msg = '🌟 Perfect! Outstanding!';
+    else if (pct >= 80) msg = '🎉 Excellent! Great job!';
+    else if (pct >= 60) msg = '💪 Good effort! Keep learning!';
+    else if (pct >= 40) msg = '📖 Practice more! You\'ll improve.';
+    else msg = '😅 Don\'t give up! Review the verbs.';
+    feedbackMsg.textContent = msg;
+    controlsEl.style.display = 'block'; // show controls again
+  }
+
+  // Reset / Try again
+  function resetQuiz() {
+    if (timerId) { clearTimeout(timerId); timerId = null; }
+    controlsEl.style.display = 'block';
+    quizArea.classList.remove('active');
+    scoreArea.classList.remove('active');
+    // Enable start button (it's already enabled)
+  }
+
+  // Event listeners
+  startBtn.addEventListener('click', startQuiz);
+  resetBtn.addEventListener('click', resetQuiz);
+
+  // Ensure range inputs are within bounds
+  rangeFrom.addEventListener('change', function() {
+    let v = parseInt(this.value, 10);
+    if (isNaN(v) || v < 1) this.value = 1;
+    if (v > 100) this.value = 100;
+  });
+  rangeTo.addEventListener('change', function() {
+    let v = parseInt(this.value, 10);
+    if (isNaN(v) || v < 1) this.value = 1;
+    if (v > 100) this.value = 100;
+  });
+
+  // Initially hide quiz area, show controls
+  controlsEl.style.display = 'block';
+  quizArea.classList.remove('active');
+  scoreArea.classList.remove('active');
+</script>
+</body>
+</html>
