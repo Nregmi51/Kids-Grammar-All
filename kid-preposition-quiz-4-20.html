@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Preposition Quiz — Set 2</title>
+<style>
+  *{box-sizing:border-box;}
+
+  body{
+    margin:0;
+    min-height:100vh;
+    font-family:"Segoe UI",Verdana,Geneva,sans-serif;
+    font-weight:900;
+    background:linear-gradient(135deg,#00d2ff,#7b2ff7,#ff2e63,#ffb400,#00d2ff);
+    background-size:400% 400%;
+    animation:bgmove 16s ease infinite;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:18px;
+  }
+  @keyframes bgmove{
+    0%{background-position:0% 50%}
+    50%{background-position:100% 50%}
+    100%{background-position:0% 50%}
+  }
+
+  .wrap{width:100%;max-width:940px;}
+
+  .title{
+    margin:0 0 16px;
+    text-align:center;
+    font-size:34px;
+    font-weight:900;
+    letter-spacing:3px;
+    color:#fff;
+    text-shadow:0 5px 0 rgba(0,0,0,.30), 0 0 26px rgba(255,255,255,.45);
+  }
+
+  .card{
+    background:#ffffff;
+    border:5px solid #14142b;
+    border-radius:26px;
+    padding:22px 24px;
+    box-shadow:0 12px 0 #14142b, 0 22px 42px rgba(0,0,0,.35);
+  }
+  .qcard{margin-bottom:18px;}
+
+  /* ---------- TOP ROW ---------- */
+  .toprow{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:14px;
+  }
+  .pill{
+    font-size:22px;
+    font-weight:900;
+    padding:8px 18px;
+    border-radius:999px;
+    border:4px solid #14142b;
+    background:#ffe45e;
+    color:#14142b;
+    letter-spacing:1px;
+  }
+  .pill.score{background:#00e0a4;}
+
+  /* ---------- QUESTION ---------- */
+  .question{
+    font-size:24px;
+    font-weight:900;
+    line-height:1.6;
+    color:#14142b;
+    margin:6px 0 20px;
+  }
+  .blank{
+    display:inline-block;
+    min-width:120px;
+    text-align:center;
+    color:#7b2ff7;
+    border-bottom:5px solid #7b2ff7;
+    padding:0 8px;
+  }
+  .blank.ok{color:#0f8a45;border-color:#22c55e;}
+  .blank.no{color:#c81e1e;border-color:#ef4444;}
+
+  /* ---------- OPTIONS ---------- */
+  .options{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:14px;
+    margin-bottom:16px;
+  }
+  .opt{
+    font-family:inherit;
+    font-size:22px;
+    font-weight:900;
+    letter-spacing:.5px;
+    padding:16px 10px;
+    border-radius:18px;
+    border:4px solid #14142b;
+    background:#fff;
+    color:#14142b;
+    cursor:pointer;
+    box-shadow:0 7px 0 #14142b;
+    transition:transform .12s ease, background .18s ease, box-shadow .12s ease, opacity .2s;
+  }
+  .opt:hover:not(:disabled){transform:translateY(-4px);background:#fff3b0;}
+  .opt:active:not(:disabled){transform:translateY(4px);box-shadow:0 2px 0 #14142b;}
+
+  .opt.correct{background:#22c55e;color:#fff;box-shadow:0 7px 0 #0f7a37;}
+  .opt.wrong{background:#ef4444;color:#fff;box-shadow:0 7px 0 #9b1c1c;}
+  .opt.reveal{
+    background:#d7ffe6;color:#0f7a37;
+    border-style:dashed;
+    animation:pulse .55s ease-in-out 3;
+  }
+  .opt.dim{opacity:.38;}
+  .opt:disabled{cursor:default;}
+  @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+
+  /* ---------- FEEDBACK ---------- */
+  .feedback{
+    font-size:22px;
+    font-weight:900;
+    min-height:34px;
+    letter-spacing:.5px;
+    margin-bottom:14px;
+    transition:opacity .15s;
+  }
+  .feedback.ok{color:#0f8a45;}
+  .feedback.no{color:#c81e1e;}
+
+  /* ---------- NAV ---------- */
+  .navrow{display:flex;gap:14px;justify-content:space-between;}
+  .nav{
+    font-family:inherit;
+    font-size:22px;
+    font-weight:900;
+    letter-spacing:1px;
+    padding:13px 26px;
+    border-radius:18px;
+    border:4px solid #14142b;
+    background:#7b2ff7;
+    color:#fff;
+    cursor:pointer;
+    box-shadow:0 7px 0 #14142b;
+    transition:transform .12s, background .18s, box-shadow .12s;
+  }
+  .nav:hover:not(:disabled){background:#9d5cff;transform:translateY(-3px);}
+  .nav:active:not(:disabled){transform:translateY(4px);box-shadow:0 2px 0 #14142b;}
+  .nav:disabled{opacity:.35;cursor:not-allowed;}
+
+  /* ---------- PROGRESS CARD ---------- */
+  .ptitle{
+    font-size:22px;
+    font-weight:900;
+    color:#14142b;
+    letter-spacing:1px;
+    margin-bottom:12px;
+    text-align:center;
+  }
+  .dots{
+    display:flex;
+    flex-wrap:wrap;
+    gap:9px;
+    justify-content:center;
+    margin-bottom:14px;
+  }
+  .dot{
+    font-family:inherit;
+    width:46px;height:46px;
+    font-size:16px;
+    font-weight:900;
+    border-radius:12px;
+    border:4px solid #14142b;
+    background:#fff;
+    color:#14142b;
+    cursor:pointer;
+    box-shadow:0 5px 0 #14142b;
+    transition:transform .1s, background .18s;
+  }
+  .dot:hover{transform:translateY(-3px);}
+  .dot.ok{background:#22c55e;color:#fff;}
+  .dot.no{background:#ef4444;color:#fff;}
+  .dot.active{
+    outline:5px solid #ffb400;
+    outline-offset:2px;
+    transform:scale(1.10);
+  }
+
+  .legend{
+    display:flex;
+    flex-wrap:wrap;
+    gap:16px;
+    align-items:center;
+    justify-content:center;
+    font-size:18px;
+    font-weight:900;
+    color:#14142b;
+  }
+  .legend span{display:flex;align-items:center;gap:7px;}
+  .sw{width:18px;height:18px;border-radius:5px;border:3px solid #14142b;background:#fff;display:inline-block;}
+  .sw.ok{background:#22c55e;}
+  .sw.no{background:#ef4444;}
+
+  .restart{
+    font-family:inherit;
+    font-size:18px;
+    font-weight:900;
+    padding:8px 18px;
+    border-radius:14px;
+    border:4px solid #14142b;
+    background:#ff2e63;
+    color:#fff;
+    cursor:pointer;
+    box-shadow:0 5px 0 #14142b;
+    transition:transform .12s;
+  }
+  .restart:hover{transform:translateY(-3px);}
+  .restart:active{transform:translateY(3px);box-shadow:0 1px 0 #14142b;}
+
+  .finish{
+    display:none;
+    margin-top:14px;
+    text-align:center;
+    font-size:22px;
+    font-weight:900;
+    color:#14142b;
+    background:#00e0a4;
+    border:4px solid #14142b;
+    border-radius:16px;
+    padding:12px;
+  }
+  .finish.show{display:block;}
+
+  /* ---------- CARD ANIMATION ---------- */
+  .pop{animation:pop .28s ease;}
+  @keyframes pop{
+    0%{transform:scale(.96) translateY(10px);opacity:.4}
+    100%{transform:scale(1) translateY(0);opacity:1}
+  }
+
+  @media(max-width:640px){
+    .title{font-size:22px;letter-spacing:1px;}
+    .question{font-size:22px;}
+    .options{grid-template-columns:1fr;}
+    .opt{font-size:22px;}
+    .nav{font-size:18px;padding:11px 16px;}
+    .pill{font-size:18px;}
+    .dot{width:40px;height:40px;font-size:14px;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1 class="title">PREPOSITION QUIZ — SET 2</h1>
+
+  <!-- ================= QUESTION CARD ================= -->
+  <div class="card qcard" id="qcard">
+    <div class="toprow">
+      <span class="pill" id="qnum">Question 1 / 20</span>
+      <span class="pill score" id="score">SCORE 0</span>
+    </div>
+
+    <p class="question" id="question"></p>
+    <div class="options" id="options"></div>
+    <div class="feedback" id="feedback"></div>
+
+    <div class="navrow">
+      <button class="nav" id="prev">◀ PREV</button>
+      <button class="nav" id="next">NEXT ▶</button>
+    </div>
+  </div>
+
+  <!-- ================= PROGRESS CARD ================= -->
+  <div class="card pcard">
+    <div class="ptitle">PROGRESS — TAP A NUMBER TO REVIEW</div>
+    <div class="dots" id="dots"></div>
+    <div class="legend">
+      <span><i class="sw ok"></i>Correct</span>
+      <span><i class="sw no"></i>Wrong</span>
+      <span><i class="sw"></i>Unanswered</span>
+      <button class="restart" id="restart">↻ RESTART</button>
+    </div>
+    <div class="finish" id="finish"></div>
+  </div>
+</div>
+
+<script>
+/* =========================================================
+   DATA — 20 preposition questions (Set 2)
+   ========================================================= */
+const RAW = [
+  {before:"He jumped ",                          after:" the river to save the drowning child.",   options:["into","in","onto"],          answer:"into"},
+  {before:"She has been waiting at the bus stop ", after:" 8 o'clock.",                           options:["since","for","by"],          answer:"since"},
+  {before:"The news of his success spread ",      after:" the entire village.",                    options:["throughout","in","between"], answer:"throughout"},
+  {before:"He was standing ",                     after:" the two tall buildings.",                options:["between","among","through"], answer:"between"},
+  {before:"The man died ",                        after:" malaria last week.",                     options:["of","from","by"],            answer:"of"},
+  {before:"She is senior ",                       after:" all her colleagues in the office.",      options:["to","than","from"],          answer:"to"},
+  {before:"They walked ",                         after:" the bank of the river in the evening.",  options:["along","across","through"],  answer:"along"},
+  {before:"The cat ran ",                         after:" the road right in front of the car.",    options:["across","along","into"],     answer:"across"},
+  {before:"My mother is fond ",                   after:" reading historical novels.",             options:["of","in","with"],            answer:"of"},
+  {before:"He goes to school ",                   after:" foot every single day.",                 options:["on","by","with"],            answer:"on"},
+  {before:"She divided the birthday cake ",       after:" all the children at the party.",         options:["among","between","with"],    answer:"among"},
+  {before:"They are getting married ",            after:" two weeks' time.",                       options:["in","on","at"],              answer:"in"},
+  {before:"The airplane flew high ",              after:" the clouds.",                            options:["above","on","at"],           answer:"above"},
+  {before:"I prefer tea ",                        after:" coffee in the morning.",                 options:["to","than","for"],           answer:"to"},
+  {before:"He was accused ",                      after:" stealing the gold ring.",                options:["of","for","with"],           answer:"of"},
+  {before:"We stayed in Pokhara ",                after:" three days during the vacation.",        options:["for","since","in"],          answer:"for"},
+  {before:"Please don't lean ",                   after:" the freshly painted wall.",              options:["against","on","in"],         answer:"against"},
+  {before:"She was born ",                        after:" a small town near Kathmandu.",           options:["in","at","on"],              answer:"in"},
+  {before:"The train will leave ",                after:" ten minutes.",                           options:["in","at","on"],              answer:"in"},
+  {before:"He relies ",                           after:" his parents for financial support.",     options:["on","in","at"],              answer:"on"}
+];
+
+/* ---------- shuffle so the answer isn't always first ---------- */
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i = a.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+const QUESTIONS = RAW.map(r => {
+  const opts = shuffle(r.options);
+  return {
+    before: r.before,
+    after: r.after,
+    options: opts,
+    correctIndex: opts.indexOf(r.answer),
+    answer: r.answer
+  };
+});
+
+/* =========================================================
+   STATE
+   ========================================================= */
+let current  = 0;
+let answers  = new Array(QUESTIONS.length).fill(null); // {chosen, correct}
+let timer    = null;
+
+/* =========================================================
+   ELEMENTS
+   ========================================================= */
+const qcardEl    = document.getElementById('qcard');
+const qnumEl     = document.getElementById('qnum');
+const scoreEl    = document.getElementById('score');
+const questionEl = document.getElementById('question');
+const optionsEl  = document.getElementById('options');
+const feedbackEl = document.getElementById('feedback');
+const dotsEl     = document.getElementById('dots');
+const prevBtn    = document.getElementById('prev');
+const nextBtn    = document.getElementById('next');
+const restartBtn = document.getElementById('restart');
+const finishEl   = document.getElementById('finish');
+
+/* =========================================================
+   HELPERS
+   ========================================================= */
+function clearTimer(){
+  if(timer){ clearTimeout(timer); timer = null; }
+}
+
+function score(){
+  return answers.filter(a => a && a.correct).length;
+}
+
+function allAnswered(){
+  return answers.every(a => a !== null);
+}
+
+/* =========================================================
+   BUILD PROGRESS DOTS (once)
+   ========================================================= */
+function buildDots(){
+  dotsEl.innerHTML = '';
+  QUESTIONS.forEach((_, i) => {
+    const d = document.createElement('button');
+    d.className = 'dot';
+    d.textContent = i + 1;
+    d.addEventListener('click', () => {
+      clearTimer();
+      current = i;
+      render();
+    });
+    dotsEl.appendChild(d);
+  });
+}
+
+/* =========================================================
+   RENDER
+   ========================================================= */
+function render(){
+  const q = QUESTIONS[current];
+  const answered = answers[current];
+
+  /* ---- header ---- */
+  qnumEl.textContent = `Question ${current + 1} / ${QUESTIONS.length}`;
+  scoreEl.textContent = `SCORE ${score()}`;
+
+  /* ---- question with blank ---- */
+  let blankHTML;
+  if(answered){
+    blankHTML = `<span class="blank ${answered.correct ? 'ok' : 'no'}">${
+      q.options[answered.chosen]
+    }</span>`;
+  }else{
+    blankHTML = `<span class="blank">______</span>`;
+  }
+  questionEl.innerHTML = q.before + blankHTML + q.after;
+
+  /* ---- options ---- */
+  optionsEl.innerHTML = '';
+  q.options.forEach((opt, i) => {
+    const b = document.createElement('button');
+    b.className = 'opt';
+    b.textContent = opt;
+
+    if(answered){
+      b.disabled = true;
+      if(i === answered.chosen && i === q.correctIndex){
+        b.classList.add('correct');
+      }else if(i === answered.chosen){
+        b.classList.add('wrong');
+      }else if(i === q.correctIndex){
+        b.classList.add('reveal');
+      }else{
+        b.classList.add('dim');
+      }
+    }else{
+      b.addEventListener('click', () => choose(i));
+    }
+    optionsEl.appendChild(b);
+  });
+
+  /* ---- feedback ---- */
+  if(!answered){
+    feedbackEl.textContent = '';
+    feedbackEl.className = 'feedback';
+  }else if(answered.correct){
+    feedbackEl.textContent = `✅ CORRECT!  "${q.options[q.correctIndex]}" is right.`;
+    feedbackEl.className = 'feedback ok';
+  }else{
+    feedbackEl.textContent = `❌ OOPS!  Correct answer: "${q.options[q.correctIndex]}"`;
+    feedbackEl.className = 'feedback no';
+  }
+
+  /* ---- progress dots ---- */
+  [...dotsEl.children].forEach((d, i) => {
+    d.classList.toggle('active', i === current);
+    d.classList.toggle('ok', !!(answers[i] && answers[i].correct));
+    d.classList.toggle('no', !!(answers[i] && !answers[i].correct));
+  });
+
+  /* ---- nav buttons ---- */
+  prevBtn.disabled = (current === 0);
+  nextBtn.disabled = (current === QUESTIONS.length - 1);
+
+  /* ---- finish banner ---- */
+  if(allAnswered()){
+    finishEl.textContent = `🎉 ALL DONE!  YOUR SCORE: ${score()} / ${QUESTIONS.length}`;
+    finishEl.classList.add('show');
+  }else{
+    finishEl.classList.remove('show');
+  }
+
+  /* ---- pop animation ---- */
+  qcardEl.classList.remove('pop');
+  void qcardEl.offsetWidth;
+  qcardEl.classList.add('pop');
+}
+
+/* =========================================================
+   CHOOSE AN OPTION — instant feedback + 1.5s auto move
+   ========================================================= */
+function choose(i){
+  if(answers[current]) return;                 // already locked
+
+  const q = QUESTIONS[current];
+  answers[current] = { chosen: i, correct: (i === q.correctIndex) };
+  render();
+  clearTimer();
+
+  /* after 1.5 seconds → move to next question and reset */
+  timer = setTimeout(() => {
+    timer = null;
+    if(current < QUESTIONS.length - 1){
+      current++;
+      render();
+    }else{
+      render();                                 // stays on last, shows summary
+    }
+  }, 1500);
+}
+
+/* =========================================================
+   NAVIGATION (review only — never changes answers)
+   ========================================================= */
+prevBtn.addEventListener('click', () => {
+  clearTimer();
+  if(current > 0){ current--; render(); }
+});
+
+nextBtn.addEventListener('click', () => {
+  clearTimer();
+  if(current < QUESTIONS.length - 1){ current++; render(); }
+});
+
+/* =========================================================
+   RESTART
+   ========================================================= */
+restartBtn.addEventListener('click', () => {
+  clearTimer();
+  answers = new Array(QUESTIONS.length).fill(null);
+  current = 0;
+  render();
+});
+
+/* =========================================================
+   KEYBOARD SHORTCUTS
+   ========================================================= */
+document.addEventListener('keydown', e => {
+  if(e.key === 'ArrowLeft')  prevBtn.click();
+  if(e.key === 'ArrowRight') nextBtn.click();
+  if(['1','2','3'].includes(e.key)){
+    const idx = parseInt(e.key, 10) - 1;
+    const btn = optionsEl.children[idx];
+    if(btn && !btn.disabled) btn.click();
+  }
+});
+
+/* =========================================================
+   INIT
+   ========================================================= */
+buildDots();
+render();
+</script>
+</body>
+</html>
